@@ -48,19 +48,17 @@ async def notify_clients(message: str):
         await connection.send_text(message)
 
 
-@router_websocket.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
+@router_websocket.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int):
     await manager.connect(websocket)
     await manager.send_personal_message(f"Hi!")
     try:
         while True:
             data = await websocket.receive_text()
             create_idea()
-            #await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
+            await manager.broadcast(f"User #{user_id} says: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        #await manager.broadcast(f"Client #{client_id} left the chat")
 
 
 # Users
